@@ -250,6 +250,26 @@ Pencatatan data dilakukan di server database MySQL/MariaDB. Berikut adalah dafta
       <img src="docs/table-ewallet.png" alt="Table e_wallet" width="100%"/>
     </td>
   </tr>
+  <tr>
+    <td width="50%">
+      <b>Struktur Tabel `kendaraan`</b><br/>
+      <img src="docs/table-kendaraan.png" alt="Table kendaraan" width="100%"/>
+    </td>
+    <td width="50%">
+      <b>Struktur Tabel `laporan_parkir`</b><br/>
+      <img src="docs/table-laporan.png" alt="Table laporan_parkir" width="100%"/>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <b>Struktur Tabel `lokasi_parkir`</b><br/>
+      <img src="docs/table-lokasi.png" alt="Table lokasi_parkir" width="100%"/>
+    </td>
+    <td width="50%">
+      <b>Struktur Tabel `pembayaran`</b><br/>
+      <img src="docs/table-pembayaran.png" alt="Table pembayaran" width="100%"/>
+    </td>
+  </tr>
 </table>
 
 ### 3. Diagram Alur Proses Sistem (BPMN / System Flowchart)
