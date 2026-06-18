@@ -435,17 +435,17 @@ Aplikasi memiliki fitur pembuat database otomatis yang sangat praktis:
 
 ## 🔑 Kredensial Akun Uji Coba
 
-Gunakan kredensial berikut untuk menguji coba fitur masing-masing role:
+Gunakan kredensial berikut untuk menguji coba fitur masing-masing role. **Password default untuk seluruh akun uji coba di bawah ini adalah `123456`**:
 
 1.  **Pengguna (User)**:
     *   Username: `philip` atau `kamil`
-    *   Password: *(Dapat melakukan registrasi akun baru langsung di halaman login)*
+    *   Password: `123456` *(Anda juga dapat mendaftarkan akun baru secara mandiri)*
 2.  **Petugas Gerbang (Staff)**:
     *   Username: `admin` atau `uus`
+    *   Password: `123456`
 3.  **Kepala Loket (Manager)**:
     *   Username: `jack`
-
-*(Catatan: Untuk masuk menggunakan akun demo di atas, silakan cek hash password pada tabel `akun_pengguna` di database atau tambahkan akun baru melalui menu pengelolaan Kepala Loket).*
+    *   Password: `123456`
 
 ---
 
