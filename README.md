@@ -242,22 +242,22 @@ Pencatatan data dilakukan di server database MySQL/MariaDB. Berikut adalah dafta
   </tr>
   <tr>
     <td width="50%">
-      <b>Struktur Tabel `cctv_loket_masuk`</b><br/>
-      <img src="docs/table-cctv.png" alt="Table cctv" width="100%"/>
+      <b>Struktur Tabel `pengguna_parkir`</b><br/>
+      <img src="docs/table-pengguna.png" alt="Table pengguna_parkir" width="100%"/>
     </td>
     <td width="50%">
-      <b>Struktur Tabel `e_wallet`</b><br/>
-      <img src="docs/table-ewallet.png" alt="Table e_wallet" width="100%"/>
+      <b>Struktur Tabel `petugas_loket_keluar`</b><br/>
+      <img src="docs/table-petugas.png" alt="Table petugas_loket_keluar" width="100%"/>
     </td>
   </tr>
   <tr>
     <td width="50%">
-      <b>Struktur Tabel `kendaraan`</b><br/>
-      <img src="docs/table-kendaraan.png" alt="Table kendaraan" width="100%"/>
+      <b>Struktur Tabel `e_wallet`</b><br/>
+      <img src="docs/table-ewallet.png" alt="Table e_wallet" width="100%"/>
     </td>
     <td width="50%">
-      <b>Struktur Tabel `laporan_parkir`</b><br/>
-      <img src="docs/table-laporan.png" alt="Table laporan_parkir" width="100%"/>
+      <b>Struktur Tabel `kendaraan`</b><br/>
+      <img src="docs/table-kendaraan.png" alt="Table kendaraan" width="100%"/>
     </td>
   </tr>
   <tr>
@@ -266,8 +266,34 @@ Pencatatan data dilakukan di server database MySQL/MariaDB. Berikut adalah dafta
       <img src="docs/table-lokasi.png" alt="Table lokasi_parkir" width="100%"/>
     </td>
     <td width="50%">
+      <b>Struktur Tabel `tarif_parkir`</b><br/>
+      <img src="docs/table-tarif.png" alt="Table tarif_parkir" width="100%"/>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
       <b>Struktur Tabel `pembayaran`</b><br/>
       <img src="docs/table-pembayaran.png" alt="Table pembayaran" width="100%"/>
+    </td>
+    <td width="50%">
+      <b>Struktur Tabel `struk_digital`</b><br/>
+      <img src="docs/table-struk.png" alt="Table struk_digital" width="100%"/>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <b>Struktur Tabel `qr_code_parkir`</b><br/>
+      <img src="docs/table-qrcode.png" alt="Table qr_code_parkir" width="100%"/>
+    </td>
+    <td width="50%">
+      <b>Struktur Tabel `laporan_parkir`</b><br/>
+      <img src="docs/table-laporan.png" alt="Table laporan_parkir" width="100%"/>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center">
+      <b>Struktur Tabel `cctv_loket_masuk`</b><br/>
+      <img src="docs/table-cctv.png" alt="Table cctv_loket_masuk" width="50%"/>
     </td>
   </tr>
 </table>
