@@ -2,6 +2,8 @@
 
 **SParking UTN** adalah sistem manajemen perparkiran pintar berbasis web futuristik yang dirancang khusus untuk ekosistem kampus **Universitas Teknologi Nusantara (UTN)**. Sistem ini mengintegrasikan pemantauan kapasitas slot parkir secara real-time melalui peta 3D interaktif, registrasi kendaraan mandiri, pembayaran elektronik via e-wallet terintegrasi, serta gerbang check-out berbasis scan QR Code (dengan webcam scanner).
 
+🌐 **Live Demo Website**: [philipthamsir.dev/sparking/](https://philipthamsir.dev/sparking/) *(Gunakan kredensial uji coba di bawah untuk mencoba)*
+
 ![Landing Page SParking](docs/landing-page.png)
 
 ---
