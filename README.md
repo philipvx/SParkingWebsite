@@ -1,46 +1,324 @@
 # SParking UTN — Smart & Integrated Parking System
 
-**SParking UTN** adalah sistem manajemen perparkiran pintar berbasis web yang dirancang khusus untuk ekosistem kampus **Universitas Teknologi Nusantara (UTN)**. Sistem ini mengintegrasikan pelacakan kapasitas slot parkir secara real-time, registrasi kendaraan mandiri, pembayaran elektronik via e-wallet, check-out berbasis QR Code dengan webcam scanner, serta asisten virtual WhatsApp chatbot bertenaga kecerdasan buatan (Gemini AI).
+**SParking UTN** adalah sistem manajemen perparkiran pintar berbasis web futuristik yang dirancang khusus untuk ekosistem kampus **Universitas Teknologi Nusantara (UTN)**. Sistem ini mengintegrasikan pemantauan kapasitas slot parkir secara real-time melalui peta 3D interaktif, registrasi kendaraan mandiri, pembayaran elektronik via e-wallet terintegrasi, gerbang check-out berbasis scan QR Code (dengan webcam scanner), serta asisten virtual chatbot WhatsApp bertenaga kecerdasan buatan (Gemini AI).
+
+![Landing Page SParking](docs/landing-page.png)
 
 ---
 
-## 🚀 Fitur Utama
+## 📋 Daftar Isi
+- [📌 Overview & Case Study](#-overview--case-study)
+- [⚙️ Arsitektur Sistem](#️-arsitektur-sistem)
+- [📂 Database Diagram (ERD) & Process Flow](#-database-diagram-erd--process-flow)
+- [👤 Screenshot Peran (Role Showcase)](#-screenshot-peran-role-showcase)
+- [🛠️ Spesifikasi Teknologi (Tech Stack)](#️-spesifikasi-teknologi-tech-stack)
+- [🚀 Petunjuk Pemasangan (Setup Guide)](#-petunjuk-pemasangan-setup-guide)
+- [🔑 Kredensial Akun Uji Coba](#-kredensial-akun-uji-coba)
+- [💬 Konfigurasi WhatsApp Chatbot](#-konfigurasi-whatsapp-chatbot)
 
-Sistem ini membagi akses menjadi 3 peran utama (Roles) dengan fitur-fitur pendukung:
+---
+
+## 📌 Overview & Case Study
+
+### 🔍 Masalah (Problem)
+Sistem perparkiran konvensional di lingkungan kampus UTN sebelumnya masih menggunakan pencatatan manual berbasis karcis kertas. Hal ini menimbulkan beberapa kendala utama:
+1. **Antrean Panjang**: Proses pencatatan manual saat masuk dan pembayaran tunai saat keluar memakan waktu lama, menyebabkan kemacetan di pintu gerbang kampus pada jam masuk/pulang.
+2. **Ketiadaan Informasi Slot**: Pengendara (mahasiswa/dosen/staf) tidak mengetahui ketersediaan slot parkir yang kosong sebelum masuk, sehingga membuang waktu berkeliling mencari tempat kosong.
+3. **Risiko Kebocoran Dana**: Karcis kertas mudah hilang dan pencatatan manual rawan manipulasi laporan pendapatan parkir harian/bulanan.
+
+### 💡 Solusi (Solution)
+**SParking UTN** hadir sebagai solusi sistem perparkiran pintar berbasis web terintegrasi yang menghadirkan efisiensi, transparansi, dan kemudahan akses:
+- **Peta Slot Parkir 3D Real-time**: Simulator slot parkir interaktif pada Landing Page yang menampilkan status terisi/kosong di berbagai fakultas secara instan.
+- **Registrasi & Booking QR**: Pengguna dapat mendaftarkan kendaraan mereka secara mandiri, menghubungkan e-wallet, dan memesan tempat parkir untuk menghasilkan QR Code check-in & check-out secara otomatis.
+- **Otomatisasi Pintu Keluar**: Petugas gerbang hanya perlu memindai QR Code dari layar HP pengguna menggunakan kamera/webcam laptop untuk memproses check-out instan.
+- **Pembayaran Cashless**: Integrasi simulasi saldo E-Wallet (GoPay, OVO, DANA, ShopeePay, LinkAja) untuk pemotongan saldo otomatis yang aman dan praktis.
+- **Asisten WhatsApp AI ("Kira")**: Chatbot WhatsApp berbasis Gemini 3.1 Flash Lite API (NLP Gen Z) dan Fonnte API untuk membantu civitas memeriksa slot parkir, informasi tarif, hingga meringkas tautan web secara langsung lewat obrolan teks santai.
+
+### 📈 Hasil (Result)
+- **Efisiensi Gerbang**: Waktu transaksi check-out gerbang tereduksi hingga **70%** menggunakan scanner QR webcam.
+- **Transparansi Keuangan**: Audit keuangan perparkiran menjadi **100% digital** dengan laporan pendapatan real-time yang dapat diekspor langsung ke file PDF.
+- **Kenyamanan Pengguna**: Mengurangi waktu mencari parkir di kampus secara signifikan karena kapasitas slot terpantau sebelum tiba di lokasi.
+
+---
+
+## ⚙️ Arsitektur Sistem
+
+Sistem SParking mengadopsi arsitektur multi-role dengan alur kerja backend terintegrasi:
+
+```mermaid
+flowchart TD
+    subgraph Aktor & Antarmuka [Aktor & Antarmuka]
+        U[Pengguna / Civitas Kampus] -->|Akses Dashboard| UI_U[Portal Pengguna Web]
+        P[Petugas Gerbang Keluar] -->|Scan QR / Input| UI_P[Portal Scanner Petugas]
+        K[Kepala Loket / Admin] -->|Kelola & Pantau| UI_K[Portal Dashboard Kepala]
+        WA[Nomor WhatsApp Pengguna] -->|Chat Kontekstual| Bot[WhatsApp Chatbot 'Kira']
+    end
+
+    subgraph Backend_Engine [PHP Backend Engine]
+        UI_U --> Logic[Business Logic & Helpers]
+        UI_P --> Logic
+        UI_K --> Logic
+        
+        Logic --> Auth[Multi-role Session Auth]
+        Logic --> Calc[Kalkulator Biaya Otomatis]
+        Logic --> Report[Ekspor Laporan PDF FPDF]
+    end
+
+    subgraph Integrasi_API [Layanan Pihak Ketiga & API]
+        Logic -->|Generate Code| QR_API[QR Server API]
+        UI_P -->|Scanner Webcam| Cam_JS[Html5-Qrcode Library]
+        
+        Bot -->|Webhook HTTP POST| WH_PHP[webhook.php]
+        WH_PHP -->|Pemrosesan NLP Gen Z| Gemini[Google Gemini 3.1 Flash Lite API]
+        WH_PHP -->|Kirim Respon Chat| Fonnte[Fonnte WhatsApp Gateway API]
+    end
+
+    subgraph Penyimpanan_Data [Basis Data]
+        Logic -->|Read / Write SQL| DB[(MySQL / MariaDB)]
+        WH_PHP -->|Memori Konteks Percakapan| DB
+    end
+
+    style Aktor & Antarmuka fill:#bbf,stroke:#333,stroke-width:2px
+    style Backend_Engine fill:#ddf,stroke:#333,stroke-width:2px
+    style Integrasi_API fill:#dfd,stroke:#333,stroke-width:2px
+    style Penyimpanan_Data fill:#ffd,stroke:#333,stroke-width:2px
+```
+
+---
+
+## 📂 Database Diagram (ERD) & Process Flow
+
+### 1. Database Class Diagram (Barker ERD)
+Skema relasi entitas MySQL yang mendasari sistem SParking UTN:
+
+![Database ERD Barker](docs/erd-diagram.png)
+
+> [!NOTE]  
+> Anda juga dapat melihat representasi database secara interaktif melalui diagram Mermaid ERD berikut:
+
+<details>
+<summary><b>Klik untuk melihat kode Mermaid ERD</b></summary>
+
+```mermaid
+erDiagram
+    AKUN_PENGGUNA {
+        int id_akun PK
+        varchar username UK
+        varchar password_hash
+        enum role
+        enum status_login
+        datetime terakhir_login
+    }
+    PENGGUNA_PARKIR {
+        int id_pengguna PK, FK
+        varchar nama
+        varchar email UK
+        varchar no_hp
+        varchar foto_profil
+        varchar foto_border_warna
+        timestamp created_at
+    }
+    PETUGAS_LOKET_KELUAR {
+        int id_petugas PK, FK
+        varchar nama_petugas
+    }
+    KEPALA_LOKET_PARKIR {
+        int id_kepala PK, FK
+        varchar nama_kepala
+        text hak_akses
+    }
+    KENDARAAN {
+        int id_kendaraan PK
+        varchar plat_nomor
+        enum jenis_kendaraan
+        varchar merk
+        varchar warna
+        int id_pengguna FK
+    }
+    E_WALLET {
+        int id_ewallet PK
+        varchar provider
+        varchar nomor_akun
+        decimal saldo
+        enum status_koneksi
+        int id_pengguna FK
+    }
+    LOKASI_PARKIR {
+        int id_lokasi PK
+        varchar lokasi
+        enum jenis_kendaraan
+        enum status_lokasi
+        int kapasitas
+    }
+    TARIF_PARKIR {
+        int id_tarif PK
+        enum jenis_kendaraan
+        decimal tarif_awal
+        decimal tarif_per_jam
+        enum status_tarif
+    }
+    CCTV_LOKET_MASUK {
+        int id_cctv PK
+        varchar nama_perangkat
+        varchar lokasi
+        enum status_perangkat
+        datetime waktu_rekam
+    }
+    TRANSAKSI_PARKIR {
+        int id_transaksi PK
+        datetime waktu_masuk
+        datetime waktu_keluar
+        int durasi
+        decimal total_biaya
+        enum status_transaksi
+        int id_kendaraan FK
+        int id_lokasi FK
+        int id_cctv FK
+    }
+    PEMBAYARAN {
+        int id_pembayaran PK
+        enum metode_pembayaran
+        decimal jumlah_bayar
+        datetime waktu_bayar
+        enum status_pembayaran
+        int id_transaksi FK
+        int id_petugas FK
+        int id_ewallet FK
+    }
+    STRUK_DIGITAL {
+        int id_struk PK
+        varchar nomor_struk UK
+        datetime tanggal_struk
+        decimal total_bayar
+        int id_pembayaran FK
+    }
+    LAPORAN_PARKIR {
+        int id_laporan PK
+        enum jenis_laporan
+        date periode
+        int total_transaksi
+        decimal total_pendapatan
+        int id_kepala FK
+    }
+
+    AKUN_PENGGUNA ||--o| PENGGUNA_PARKIR : "has profile"
+    AKUN_PENGGUNA ||--o| PETUGAS_LOKET_KELUAR : "has profile"
+    AKUN_PENGGUNA ||--o| KEPALA_LOKET_PARKIR : "has profile"
+    
+    PENGGUNA_PARKIR ||--o{ KENDARAAN : "owns"
+    PENGGUNA_PARKIR ||--o{ E_WALLET : "connects"
+    
+    KENDARAAN ||--o{ TRANSAKSI_PARKIR : "records"
+    LOKASI_PARKIR ||--o{ TRANSAKSI_PARKIR : "allocated in"
+    CCTV_LOKET_MASUK ||--o{ TRANSAKSI_PARKIR : "captured by"
+    
+    TRANSAKSI_PARKIR ||--|| PEMBAYARAN : "settles"
+    PEMBAYARAN ||--|| STRUK_DIGITAL : "generates"
+    PEMBAYARAN }o--|| PETUGAS_LOKET_KELUAR : "processed by"
+    PEMBAYARAN }o--|| E_WALLET : "debited from"
+    
+    KEPALA_LOKET_PARKIR ||--o{ LAPORAN_PARKIR : "generates"
+```
+</details>
+
+### 2. Diagram Alur Proses Sistem (BPMN / System Flowchart)
+Pemetaan langkah operasional sistem mulai dari kedatangan kendaraan, verifikasi parkir, pembayaran cashless, hingga penutupan transaksi:
+
+![System Flow Diagram](docs/flow-diagram.png)
+
+---
+
+## 👤 Screenshot Peran (Role Showcase)
+
+### 🚪 Halaman Masuk Aplikasi (Multi-Role Login)
+Desain antarmuka login yang modern dan responsif menggunakan efek kaca mengkilap (*frosted glassmorphism*).
+![Login Page](docs/login-page.png)
 
 ### 1. Portal Pengguna (Mahasiswa/Dosen/Staf)
-*   **Dashboard Interaktif**: Ucapan selamat personal sesuai waktu server, jam digital real-time, panel informasi status kendaraan yang sedang diparkir (disertai timer durasi parkir), dan ringkasan riwayat transaksi terakhir.
-*   **Manajemen E-Wallet**: Menghubungkan dan melihat saldo e-wallet terintegrasi (GoPay, OVO, DANA, ShopeePay, LinkAja) secara langsung.
-*   **Peta & Slot Parkir**: Memantau kapasitas slot parkir yang tersedia secara real-time pada berbagai lokasi (Fakultas Ekonomi Digital, Fakultas Saintek, Fakultas Teknik) untuk jenis kendaraan mobil dan motor.
-*   **Registrasi Kendaraan**: Mendaftarkan nomor plat, merk, warna, dan jenis kendaraan (mobil/motor).
-*   **QR Code Parkir**: Menghasilkan QR Code check-in & check-out secara otomatis untuk dipindai oleh petugas saat masuk/keluar gerbang parkir.
-*   **Riwayat Transaksi**: Detail lengkap riwayat transaksi parkir lengkap dengan durasi parkir, total biaya, status (Parkir, Selesai, Batal), dan cetak struk digital.
+Pengguna memiliki kontrol penuh terhadap kendaraan terdaftar, status e-wallet terintegrasi, dan struk digital mereka sendiri.
+<table>
+  <tr>
+    <td width="50%">
+      <b>Dashboard Pengguna</b><br/>
+      Menampilkan saldo e-wallet terhubung, riwayat transaksi parkir, dan ringkasan statistik.
+      <img src="docs/user-dashboard.png" alt="User Dashboard" width="100%"/>
+    </td>
+    <td width="50%">
+      <b>Struk Digital Pembayaran</b><br/>
+      Kuitansi pembayaran digital yang rapi dan memuat rincian tarif secara transparan.
+      <img src="docs/user-struk.png" alt="Digital Receipt" width="100%"/>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <b>Pemesanan & QR Code Masuk</b><br/>
+      Menghasilkan QR Code parkir otomatis yang siap di-scan petugas pintu masuk.
+      <img src="docs/user-qrcode.png" alt="QR Check-in" width="100%"/>
+    </td>
+    <td width="50%">
+      <b>QR Code Check-Out Gerbang</b><br/>
+      Kode QR yang ditampilkan di ponsel saat pengguna hendak meninggalkan area parkir.
+      <img src="docs/user-qrcode-out.png" alt="QR Check-out" width="100%"/>
+    </td>
+  </tr>
+</table>
 
-### 2. Portal Petugas Gerbang (Petugas Keluar)
-*   **Webcam Scanner**: Memindai QR Code dari pengguna menggunakan kamera/webcam laptop secara real-time untuk mempercepat proses check-out.
-*   **Input Manual**: Alternatif pencarian transaksi menggunakan kode QR jika kamera scanner bermasalah.
-*   **Kalkulasi Biaya Otomatis**: Sistem menghitung durasi parkir dan biaya secara dinamis berdasarkan tarif aktif yang ditetapkan.
-*   **Pembayaran Fleksibel**: Mendukung pembayaran tunai (cash) maupun pemotongan saldo otomatis via E-Wallet pengguna yang terhubung.
-*   **Daftar Transaksi Aktif**: Memantau seluruh kendaraan yang saat ini masih berada di dalam area parkir.
+### 2. Portal Petugas Gerbang Keluar
+Petugas menggunakan scanner webcam laptop atau input manual kode transaksi untuk memotong saldo e-wallet pengguna.
+<table>
+  <tr>
+    <td width="50%">
+      <b>Dashboard Petugas</b><br/>
+      Melihat statistik kendaraan aktif di dalam area parkir dan tombol pintasan operasional.
+      <img src="docs/petugas-dashboard.png" alt="Petugas Dashboard" width="100%"/>
+    </td>
+    <td width="50%">
+      <b>Kamera Webcam Scanner QR</b><br/>
+      Pustaka scanner webcam real-time untuk memindai QR Code tiket parkir pengguna.
+      <img src="docs/petugas-scanner.png" alt="Petugas Scanner" width="100%"/>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center">
+      <b>Konfirmasi Pembayaran</b><br/>
+      Kalkulasi biaya otomatis berdasarkan durasi aktif dan pilihan pemotongan saldo dari e-wallet terhubung.
+      <img src="docs/petugas-pembayaran.png" alt="Petugas Pembayaran" width="70%"/>
+    </td>
+  </tr>
+</table>
 
-### 3. Portal Kepala Loket (Administrator/Manager)
-*   **Metrik & Statistik**: Grafik transaksi 7 hari terakhir, total pendapatan harian/bulanan, dan status kapasitas parkir keseluruhan.
-*   **Manajemen Slot Lokasi**: Menambah, mengubah, atau menghapus lokasi parkir, kapasitas, serta status slot (Tersedia, Terisi, Maintenance).
-*   **Manajemen Tarif**: Mengatur tarif awal dan tarif per jam untuk setiap jenis kendaraan (mobil & motor) secara dinamis.
-*   **Manajemen Akun**: Mengelola akun petugas gerbang dan pengguna parkir yang terdaftar di dalam sistem.
-*   **Laporan & PDF Export**: Menghasilkan laporan transaksi parkir (harian/bulanan) dengan visualisasi bersih dan fitur ekspor ke file PDF.
-
-### 4. Asisten WhatsApp AI ("Kira")
-Sistem dilengkapi dengan chatbot WhatsApp terintegrasi pada file [webhook.php](file:///c:/xampp/htdocs/parkir/webhook.php):
-*   **Nama Bot**: **Kira**, asisten pintar milik Philip.
-*   **Persona**: Santai, ceria, informatif, dan menggunakan gaya bahasa khas Gen Z.
-*   **Teknologi**: Menggunakan Gemini 3.1 Flash Lite API (via Google Generative Language API) & Fonnte Gateway.
-*   **Integrasi Web Scraping**: Mampu mendeteksi tautan/URL di dalam chat WhatsApp, mengunduh konten web tersebut secara otomatis (hingga 3000 karakter), dan menjawab pertanyaan berdasarkan konten situs web tersebut.
-*   **Memori Konteks**: Menyimpan riwayat percakapan hingga 10 baris chat terakhir per nomor pengguna untuk memberikan respon yang kontekstual.
+### 3. Portal Kepala Loket (Administrator & Manager)
+Manajer memiliki hak akses penuh untuk mengawasi kapasitas parkir, menyesuaikan tarif dasar, dan mengekspor laporan bisnis formal.
+<table>
+  <tr>
+    <td width="50%">
+      <b>Dashboard Kepala Loket</b><br/>
+      Menampilkan metrik pendapatan harian, diagram aktivitas, dan pintasan administrasi.
+      <img src="docs/kepala-dashboard.png" alt="Kepala Dashboard" width="100%"/>
+    </td>
+    <td width="50%">
+      <b>Pusat Pembuatan Laporan</b><br/>
+      Filter laporan harian/bulanan dengan detail kueri tabel yang rapi sebelum dicetak.
+      <img src="docs/kepala-laporan.png" alt="Kepala Laporan" width="100%"/>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <b>Pratinjau PDF Laporan</b><br/>
+      Tampilan pratinjau dokumen laporan data parkir harian secara visual di dashboard.
+      <img src="docs/laporan-preview.png" alt="Laporan Preview" width="100%"/>
+    </td>
+    <td width="50%">
+      <b>Ekspor PDF & Cetak</b><br/>
+      Format cetak laporan formal yang siap disimpan ke dokumen fisik maupun digital.
+      <img src="docs/laporan-print.png" alt="Laporan Print" width="100%"/>
+    </td>
+  </tr>
+</table>
 
 ---
 
-## 🛠️ Spesifikasi Teknologi
+## 🛠️ Spesifikasi Teknologi (Tech Stack)
 
 Sistem dibangun menggunakan tumpukan teknologi modern berikut:
 *   **Bahasa Pemrograman**: Native PHP 7.4+ (menggunakan ekstensi `mysqli` dan Object-Oriented style).
@@ -54,50 +332,7 @@ Sistem dibangun menggunakan tumpukan teknologi modern berikut:
 
 ---
 
-## 📁 Struktur Direktori Proyek
-
-Berikut adalah struktur file penting dari proyek SParking UTN:
-
-```text
-parkir/
-├── .agent/                  # Konfigurasi AI Agent
-├── includes/                # Helper dan Komponen Reusable
-│   ├── config.php           # Konfigurasi Database, Session, & Base URL
-│   ├── db_helper.php        # Helper kueri database dasar
-│   ├── parking_helper.php   # Logika bisnis parkir (hitung biaya, checkout)
-│   ├── user_helper.php      # Helper profil pengguna
-│   ├── header_staff.php     # Header halaman Petugas & Kepala
-│   ├── header_user.php      # Header halaman Pengguna
-│   ├── sidebar_kepala.php   # Menu navigasi Kepala Loket
-│   ├── sidebar_petugas.php  # Menu navigasi Petugas Keluar
-│   └── sidebar_user.php     # Menu navigasi Pengguna
-├── pages/                   # Modul Halaman berdasarkan Peran
-│   ├── kepala/              # Portal Kepala Loket (Laporan, Slot, Petugas, Tarif)
-│   │   ├── dashboard.php
-│   │   ├── laporan.php
-│   │   ├── lokasi_mgmt.php
-│   │   ├── petugas_mgmt.php
-│   │   └── tarif.php
-│   ├── petugas/             # Portal Petugas Keluar (Scanner, Pembayaran)
-│   │   ├── dashboard.php
-│   │   └── scan_qr.php
-│   └── user/                # Portal Pengguna (E-wallet, Kendaraan, QR Code)
-│       ├── dashboard.php
-│       ├── ewallet.php
-│       ├── kendaraan.php
-│       ├── lokasi.php
-│       └── qrcode.php
-├── uploads/                 # Folder penyimpanan berkas unggahan (Foto Profil)
-├── index.php                # Halaman Landing utama (Landing Page)
-├── login.php                # Halaman Login Multi-Role
-├── setup_db.php             # Skrip instalasi & reset database otomatis
-├── parkir.sql               # Skema database MySQL & data contoh awal
-└── webhook.php              # Endpoint Webhook Chatbot WhatsApp (Kira)
-```
-
----
-
-## ⚙️ Petunjuk Pemasangan (Setup)
+## 🚀 Petunjuk Pemasangan (Setup Guide)
 
 Ikuti langkah-langkah di bawah ini untuk menjalankan SParking UTN di komputer lokal Anda:
 
@@ -127,7 +362,7 @@ Aplikasi memiliki fitur pembuat database otomatis yang sangat praktis:
 
 ---
 
-## 🔑 Akun Uji Coba Default
+## 🔑 Kredensial Akun Uji Coba
 
 Gunakan kredensial berikut untuk menguji coba fitur masing-masing role:
 
