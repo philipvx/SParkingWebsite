@@ -272,28 +272,32 @@ Pencatatan data dilakukan di server database MySQL/MariaDB. Berikut adalah dafta
   </tr>
   <tr>
     <td width="50%">
+      <b>Struktur Tabel `transaksi_parkir`</b><br/>
+      <img src="docs/table-transaksi.png" alt="Table transaksi_parkir" width="100%"/>
+    </td>
+    <td width="50%">
       <b>Struktur Tabel `pembayaran`</b><br/>
       <img src="docs/table-pembayaran.png" alt="Table pembayaran" width="100%"/>
     </td>
+  </tr>
+  <tr>
     <td width="50%">
       <b>Struktur Tabel `struk_digital`</b><br/>
       <img src="docs/table-struk.png" alt="Table struk_digital" width="100%"/>
     </td>
-  </tr>
-  <tr>
     <td width="50%">
       <b>Struktur Tabel `qr_code_parkir`</b><br/>
       <img src="docs/table-qrcode.png" alt="Table qr_code_parkir" width="100%"/>
     </td>
+  </tr>
+  <tr>
     <td width="50%">
       <b>Struktur Tabel `laporan_parkir`</b><br/>
       <img src="docs/table-laporan.png" alt="Table laporan_parkir" width="100%"/>
     </td>
-  </tr>
-  <tr>
-    <td colspan="2" align="center">
+    <td width="50%">
       <b>Struktur Tabel `cctv_loket_masuk`</b><br/>
-      <img src="docs/table-cctv.png" alt="Table cctv_loket_masuk" width="50%"/>
+      <img src="docs/table-cctv.png" alt="Table cctv_loket_masuk" width="100%"/>
     </td>
   </tr>
 </table>
