@@ -1,0 +1,13 @@
+# Nonaktifkan eksekusi script PHP di folder upload demi keamanan
+<FilesMatch "\.(php|php3|php4|php5|php7|php8|phtml|pl|py|jsp|sh|cgi)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Matikan indexing direktori
+Options -Indexes

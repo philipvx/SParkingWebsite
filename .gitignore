@@ -1,0 +1,56 @@
+# Node / Javascript dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# PHP / Composer
+vendor/
+composer.lock
+
+# Environment & Credentials
+.env
+.env.local
+.env.*.local
+config.local.php
+
+# Project Runtime Logs & Temp Files
+log.txt
+history.json
+history.json.tmp
+*.log
+
+# User Uploaded Content
+uploads/profil/*
+!uploads/profil/.gitkeep
+uploads/temp/*
+!uploads/temp/.gitkeep
+
+# System & OS Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# IDE, Editor, & Dev Tools
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+.agent/
+.gemini/
+
+# Mengabaikan file backup database agar tidak bocor
+parkir/backup.sql
+backup.sql
+*.sql
+
+# Webhook configuration
+webhook.php
