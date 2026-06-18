@@ -84,12 +84,17 @@ flowchart TD
     style Penyimpanan_Data fill:#ffd,stroke:#333,stroke-width:2px
 ```
 
+### 📋 Use Case Diagram Sistem
+Diagram ini memetakan fungsionalitas sistem yang dapat diakses oleh setiap Peran Aktor (Pengguna Parkir, Petugas Gerbang Keluar, Kepala Loket) serta interaksi dengan perangkat luar (CCTV ANPR dan Mesin Loket Masuk):
+
+![Use Case Diagram](docs/use-case-diagram.png)
+
 ---
 
 ## 📂 Database Diagram (ERD) & Process Flow
 
 ### 1. Database Class Diagram (Barker ERD)
-Skema relasi entitas MySQL yang mendasari sistem SParking UTN:
+Skema relasi entitas basis data SParking UTN:
 
 ![Database ERD Barker](docs/erd-diagram.png)
 
@@ -221,7 +226,33 @@ erDiagram
 ```
 </details>
 
-### 2. Diagram Alur Proses Sistem (BPMN / System Flowchart)
+### 2. Skema & Struktur Basis Data di phpMyAdmin
+Pencatatan data dilakukan di server database MySQL/MariaDB. Berikut adalah daftar 14 tabel dan visualisasi struktur kolom data tabel utama:
+
+<table>
+  <tr>
+    <td width="50%">
+      <b>Daftar 14 Tabel SParking di phpMyAdmin</b><br/>
+      <img src="docs/phpmyadmin-tables.png" alt="phpMyAdmin Tables List" width="100%"/>
+    </td>
+    <td width="50%">
+      <b>Struktur Tabel `akun_pengguna`</b><br/>
+      <img src="docs/table-akun-pengguna.png" alt="Table akun_pengguna" width="100%"/>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <b>Struktur Tabel `cctv_loket_masuk`</b><br/>
+      <img src="docs/table-cctv.png" alt="Table cctv" width="100%"/>
+    </td>
+    <td width="50%">
+      <b>Struktur Tabel `e_wallet`</b><br/>
+      <img src="docs/table-ewallet.png" alt="Table e_wallet" width="100%"/>
+    </td>
+  </tr>
+</table>
+
+### 3. Diagram Alur Proses Sistem (BPMN / System Flowchart)
 Pemetaan langkah operasional sistem mulai dari kedatangan kendaraan, verifikasi parkir, pembayaran cashless, hingga penutupan transaksi:
 
 ![System Flow Diagram](docs/flow-diagram.png)
