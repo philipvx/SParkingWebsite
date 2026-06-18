@@ -45,7 +45,7 @@ Sistem SParking menggunakan arsitektur modular multi-role dengan alur kerja back
 
 ```mermaid
 flowchart TD
-    subgraph Aktor & Antarmuka [Aktor & Antarmuka]
+    subgraph Aktor_Antarmuka [Aktor & Antarmuka]
         U[Pengguna / Civitas Kampus] -->|Akses Dashboard| UI_U[Portal Pengguna Web]
         P[Petugas Gerbang Keluar] -->|Scan QR / Input| UI_P[Portal Scanner Petugas]
         K[Kepala Loket / Admin] -->|Kelola & Pantau| UI_K[Portal Dashboard Kepala]
@@ -70,7 +70,7 @@ flowchart TD
         Logic -->|Read / Write SQL| DB[(MySQL / MariaDB)]
     end
 
-    style Aktor & Antarmuka fill:#bbf,stroke:#333,stroke-width:2px
+    style Aktor_Antarmuka fill:#bbf,stroke:#333,stroke-width:2px
     style Backend_Engine fill:#ddf,stroke:#333,stroke-width:2px
     style Integrasi_API fill:#dfd,stroke:#333,stroke-width:2px
     style Penyimpanan_Data fill:#ffd,stroke:#333,stroke-width:2px
