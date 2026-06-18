@@ -1,6 +1,6 @@
 # SParking UTN — Smart & Integrated Parking System
 
-**SParking UTN** adalah sistem manajemen perparkiran pintar berbasis web futuristik yang dirancang khusus untuk ekosistem kampus **Universitas Teknologi Nusantara (UTN)**. Sistem ini mengintegrasikan pemantauan kapasitas slot parkir secara real-time melalui peta 3D interaktif, registrasi kendaraan mandiri, pembayaran elektronik via e-wallet terintegrasi, gerbang check-out berbasis scan QR Code (dengan webcam scanner), serta asisten virtual chatbot WhatsApp bertenaga kecerdasan buatan (Gemini AI).
+**SParking UTN** adalah sistem manajemen perparkiran pintar berbasis web futuristik yang dirancang khusus untuk ekosistem kampus **Universitas Teknologi Nusantara (UTN)**. Sistem ini mengintegrasikan pemantauan kapasitas slot parkir secara real-time melalui peta 3D interaktif, registrasi kendaraan mandiri, pembayaran elektronik via e-wallet terintegrasi, serta gerbang check-out berbasis scan QR Code (dengan webcam scanner).
 
 ![Landing Page SParking](docs/landing-page.png)
 
@@ -14,7 +14,6 @@
 - [🛠️ Spesifikasi Teknologi (Tech Stack)](#️-spesifikasi-teknologi-tech-stack)
 - [🚀 Petunjuk Pemasangan (Setup Guide)](#-petunjuk-pemasangan-setup-guide)
 - [🔑 Kredensial Akun Uji Coba](#-kredensial-akun-uji-coba)
-- [💬 Konfigurasi WhatsApp Chatbot](#-konfigurasi-whatsapp-chatbot)
 
 ---
 
@@ -24,7 +23,7 @@
 Sistem perparkiran konvensional di lingkungan kampus UTN sebelumnya masih menggunakan pencatatan manual berbasis karcis kertas. Hal ini menimbulkan beberapa kendala utama:
 1. **Antrean Panjang**: Proses pencatatan manual saat masuk dan pembayaran tunai saat keluar memakan waktu lama, menyebabkan kemacetan di pintu gerbang kampus pada jam masuk/pulang.
 2. **Ketiadaan Informasi Slot**: Pengendara (mahasiswa/dosen/staf) tidak mengetahui ketersediaan slot parkir yang kosong sebelum masuk, sehingga membuang waktu berkeliling mencari tempat kosong.
-3. **Risiko Kebocoran Dana**: Karcis kertas mudah hilang dan pencatatan manual rawan manipulasi laporan pendapatan parkir harian/bulanan.
+3. **Risiko Kebocoran Dana**: Karcis kertas mudah hilang dan pencatatan manual rawan manipulasi laporan pendapatan pendapatan harian/bulanan.
 
 ### 💡 Solusi (Solution)
 **SParking UTN** hadir sebagai solusi sistem perparkiran pintar berbasis web terintegrasi yang menghadirkan efisiensi, transparansi, dan kemudahan akses:
@@ -32,7 +31,6 @@ Sistem perparkiran konvensional di lingkungan kampus UTN sebelumnya masih menggu
 - **Registrasi & Booking QR**: Pengguna dapat mendaftarkan kendaraan mereka secara mandiri, menghubungkan e-wallet, dan memesan tempat parkir untuk menghasilkan QR Code check-in & check-out secara otomatis.
 - **Otomatisasi Pintu Keluar**: Petugas gerbang hanya perlu memindai QR Code dari layar HP pengguna menggunakan kamera/webcam laptop untuk memproses check-out instan.
 - **Pembayaran Cashless**: Integrasi simulasi saldo E-Wallet (GoPay, OVO, DANA, ShopeePay, LinkAja) untuk pemotongan saldo otomatis yang aman dan praktis.
-- **Asisten WhatsApp AI ("Kira")**: Chatbot WhatsApp berbasis Gemini 3.1 Flash Lite API (NLP Gen Z) dan Fonnte API untuk membantu civitas memeriksa slot parkir, informasi tarif, hingga meringkas tautan web secara langsung lewat obrolan teks santai.
 
 ### 📈 Hasil (Result)
 - **Efisiensi Gerbang**: Waktu transaksi check-out gerbang tereduksi hingga **70%** menggunakan scanner QR webcam.
@@ -43,7 +41,7 @@ Sistem perparkiran konvensional di lingkungan kampus UTN sebelumnya masih menggu
 
 ## ⚙️ Arsitektur Sistem
 
-Sistem SParking mengadopsi arsitektur multi-role dengan alur kerja backend terintegrasi:
+Sistem SParking menggunakan arsitektur modular multi-role dengan alur kerja backend terintegrasi:
 
 ```mermaid
 flowchart TD
@@ -51,7 +49,6 @@ flowchart TD
         U[Pengguna / Civitas Kampus] -->|Akses Dashboard| UI_U[Portal Pengguna Web]
         P[Petugas Gerbang Keluar] -->|Scan QR / Input| UI_P[Portal Scanner Petugas]
         K[Kepala Loket / Admin] -->|Kelola & Pantau| UI_K[Portal Dashboard Kepala]
-        WA[Nomor WhatsApp Pengguna] -->|Chat Kontekstual| Bot[WhatsApp Chatbot 'Kira']
     end
 
     subgraph Backend_Engine [PHP Backend Engine]
@@ -67,15 +64,10 @@ flowchart TD
     subgraph Integrasi_API [Layanan Pihak Ketiga & API]
         Logic -->|Generate Code| QR_API[QR Server API]
         UI_P -->|Scanner Webcam| Cam_JS[Html5-Qrcode Library]
-        
-        Bot -->|Webhook HTTP POST| WH_PHP[webhook.php]
-        WH_PHP -->|Pemrosesan NLP Gen Z| Gemini[Google Gemini 3.1 Flash Lite API]
-        WH_PHP -->|Kirim Respon Chat| Fonnte[Fonnte WhatsApp Gateway API]
     end
 
     subgraph Penyimpanan_Data [Basis Data]
         Logic -->|Read / Write SQL| DB[(MySQL / MariaDB)]
-        WH_PHP -->|Memori Konteks Percakapan| DB
     end
 
     style Aktor & Antarmuka fill:#bbf,stroke:#333,stroke-width:2px
@@ -399,15 +391,13 @@ Manajer memiliki hak akses penuh untuk mengawasi kapasitas parkir, menyesuaikan 
 
 ---
 
-## 🛠️ Spesifikasi Teknologi (Tech Stack)
+## 🛠️ Pemetaan Teknologi (Tech Stack)
 
 Sistem dibangun menggunakan tumpukan teknologi modern berikut:
 *   **Bahasa Pemrograman**: Native PHP 7.4+ (menggunakan ekstensi `mysqli` dan Object-Oriented style).
 *   **Basis Data**: MySQL / MariaDB.
 *   **UI/UX**: HTML5, Vanilla CSS3 (Custom Design System dengan Glassmorphism, efek glow, animasi mengambang, serta font Google Fonts *Inter* & *Poppins*). Mendukung mode gelap (*Dark Mode*) bawaan yang sangat premium.
 *   **API Pihak Ketiga**:
-    *   **Google Gemini API**: Pemrosesan Natural Language Processing (NLP) chatbot WhatsApp.
-    *   **Fonnte API**: WhatsApp Gateway Integration.
     *   **QR Server API**: Pembuatan QR Code otomatis.
     *   **Html5-Qrcode**: Pustaka Javascript untuk scanner kamera pada portal petugas.
 
@@ -456,16 +446,6 @@ Gunakan kredensial berikut untuk menguji coba fitur masing-masing role:
     *   Username: `jack`
 
 *(Catatan: Untuk masuk menggunakan akun demo di atas, silakan cek hash password pada tabel `akun_pengguna` di database atau tambahkan akun baru melalui menu pengelolaan Kepala Loket).*
-
----
-
-## 💬 Konfigurasi WhatsApp Chatbot
-
-Untuk menggunakan chatbot WhatsApp "Kira":
-1.  Buka file `webhook.php`.
-2.  Ganti nilai variabel `$geminiApiKey` (pada baris 39) dengan API Key Google Gemini Anda yang valid.
-3.  Ganti nilai variabel `$fonnteToken` (pada baris 124) dengan Token Fonnte Anda.
-4.  Hubungkan webhook URL dari dashboard Fonnte ke file `webhook.php` yang sudah di-online-kan (misalnya melalui ngrok atau hosting publik).
 
 ---
 
