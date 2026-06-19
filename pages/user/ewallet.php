@@ -8,23 +8,63 @@ $msg = ''; $err = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
  if (isset($_POST['action'])) {
- if ($_POST['action'] === 'hubungkan') {
- $provider = trim($_POST['provider']);
- $nomor = trim($_POST['nomor_akun']);
- if ($provider && $nomor) {
- $stmt = $conn->prepare("INSERT INTO e_wallet (provider, nomor_akun, saldo, status_koneksi, id_pengguna) VALUES (?,?,0,'terhubung',?)");
- $stmt->bind_param("ssi", $provider, $nomor, $id);
- $stmt->execute();
- $msg = 'E-Wallet berhasil dihubungkan!';
- }
- } elseif ($_POST['action'] === 'topup') {
- $id_ewallet = intval($_POST['id_ewallet']);
- $jumlah = floatval($_POST['jumlah']);
- if ($jumlah > 0) {
- $conn->query("UPDATE e_wallet SET saldo = saldo + $jumlah WHERE id_ewallet = $id_ewallet AND id_pengguna = $id");
- $msg = 'Top Up ' . formatRupiah($jumlah) . ' berhasil!';
- }
- }
+  if ($_POST['action'] === 'hubungkan') {
+   $provider = trim($_POST['provider']);
+   $nomor = trim($_POST['nomor_akun']);
+   if ($provider && $nomor) {
+    // Check if the e-wallet provider is already linked for this user
+    $check = $conn->prepare("SELECT id_ewallet FROM e_wallet WHERE id_pengguna = ? AND provider = ? LIMIT 1");
+    $check->bind_param("is", $id, $provider);
+    $check->execute();
+    $check_res = $check->get_result();
+    if ($check_res->num_rows > 0) {
+     $err = 'Provider E-Wallet ini sudah terhubung!';
+    } else {
+     $stmt = $conn->prepare("INSERT INTO e_wallet (provider, nomor_akun, saldo, status_koneksi, id_pengguna) VALUES (?,?,0,'terhubung',?)");
+     $stmt->bind_param("ssi", $provider, $nomor, $id);
+     if ($stmt->execute()) {
+      $msg = 'E-Wallet berhasil dihubungkan!';
+     } else {
+      $err = 'Gagal menghubungkan E-Wallet.';
+     }
+    }
+   }
+  } elseif ($_POST['action'] === 'topup') {
+   $id_ewallet = intval($_POST['id_ewallet']);
+   $jumlah = floatval($_POST['jumlah']);
+   if ($jumlah > 0) {
+    $conn->query("UPDATE e_wallet SET saldo = saldo + $jumlah WHERE id_ewallet = $id_ewallet AND id_pengguna = $id");
+    $msg = 'Top Up ' . formatRupiah($jumlah) . ' berhasil!';
+   }
+  } elseif ($_POST['action'] === 'hapus') {
+   $id_ewallet = intval($_POST['id_ewallet']);
+   // Verify ownership of the wallet
+   $check_owner = $conn->prepare("SELECT id_ewallet FROM e_wallet WHERE id_ewallet = ? AND id_pengguna = ? LIMIT 1");
+   $check_owner->bind_param("ii", $id_ewallet, $id);
+   $check_owner->execute();
+   if ($check_owner->get_result()->num_rows > 0) {
+    $conn->begin_transaction();
+    try {
+     // Set id_ewallet reference to NULL in pembayaran table
+     $stmt1 = $conn->prepare("UPDATE pembayaran SET id_ewallet = NULL WHERE id_ewallet = ?");
+     $stmt1->bind_param("i", $id_ewallet);
+     $stmt1->execute();
+     
+     // Delete the e-wallet record
+     $stmt2 = $conn->prepare("DELETE FROM e_wallet WHERE id_ewallet = ? AND id_pengguna = ?");
+     $stmt2->bind_param("ii", $id_ewallet, $id);
+     $stmt2->execute();
+     
+     $conn->commit();
+     $msg = 'E-Wallet berhasil diputuskan!';
+    } catch (Exception $e) {
+     $conn->rollback();
+     $err = 'Gagal memutuskan E-Wallet: ' . $e->getMessage();
+    }
+   } else {
+    $err = 'Akses ditolak atau E-Wallet tidak ditemukan.';
+   }
+  }
  }
 }
 
@@ -39,6 +79,13 @@ require_once '../../includes/sidebar_user.php';
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       showToast(<?= json_encode($msg) ?>, 'success');
+    });
+  </script>
+  <?php endif; ?>
+  <?php if ($err): ?>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      showToast(<?= json_encode($err) ?>, 'error');
     });
   </script>
   <?php endif; ?>
@@ -75,12 +122,19 @@ require_once '../../includes/sidebar_user.php';
  </div>
  <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:700;color:var(--success);margin-bottom:16px;"><?= formatRupiah($w['saldo']) ?></div>
  <?php if ($w['status_koneksi']==='terhubung'): ?>
- <form method="POST" style="display:flex;gap:8px;">
- <input type="hidden" name="action" value="topup">
- <input type="hidden" name="id_ewallet" value="<?= $w['id_ewallet'] ?>">
- <input type="number" name="jumlah" class="form-control" placeholder="Nominal top up" min="10000" step="10000" style="flex:1;">
- <button class="btn btn-primary">Top Up</button>
- </form>
+ <div style="display:flex;flex-direction:column;gap:8px;">
+  <form method="POST" style="display:flex;gap:8px;margin:0;">
+   <input type="hidden" name="action" value="topup">
+   <input type="hidden" name="id_ewallet" value="<?= $w['id_ewallet'] ?>">
+   <input type="number" name="jumlah" class="form-control" placeholder="Nominal top up" min="10000" step="10000" style="flex:1;">
+   <button class="btn btn-primary">Top Up</button>
+  </form>
+  <form method="POST" style="margin:0;" onsubmit="return confirm('Apakah Anda yakin ingin memutuskan E-Wallet ini?')">
+   <input type="hidden" name="action" value="hapus">
+   <input type="hidden" name="id_ewallet" value="<?= $w['id_ewallet'] ?>">
+   <button class="btn btn-danger" style="width:100%;justify-content:center;">Putuskan Koneksi</button>
+  </form>
+ </div>
  <?php endif; ?>
  </div>
  <?php endwhile; ?>
